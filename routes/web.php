@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LapanganController;
 use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\PelangganController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,3 +22,6 @@ Route::resource('lapangans', LapanganController::class);
 
 // Route resource untuk jadwal
 Route::resource('jadwals', JadwalController::class);
+
+//Route resource untuk pelanggan
+Route::resource('pelanggans', PelangganController::class);

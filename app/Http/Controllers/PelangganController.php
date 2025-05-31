@@ -31,12 +31,12 @@ class PelangganController extends Controller
         return redirect()->route('pelanggans.index')->with('success', 'Pelanggan berhasil ditambahkan.');
     }
 
-    public function edit(Pelanggans $pelanggans)
+    public function edit(Pelanggans $pelanggan)
     {
         return view('pelanggans.edit', compact('pelanggan'));
     }
 
-    public function update(Request $request, Pelanggans $pelanggans)
+    public function update(Request $request, Pelanggans $pelanggan)
     {
         $request->validate([
             'nama' => 'required|string|max:255',
@@ -49,7 +49,7 @@ class PelangganController extends Controller
         return redirect()->route('pelanggans.index')->with('success', 'Pelanggan berhasil diperbarui.');
     }
 
-    public function destroy(Pelanggans $pelanggans)
+    public function destroy(Pelanggans $pelanggan)
     {
         $pelanggan->delete();
         return redirect()->route('pelanggans.index')->with('success', 'Pelanggan berhasil dihapus.');

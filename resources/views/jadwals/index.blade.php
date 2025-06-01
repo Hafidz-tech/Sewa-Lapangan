@@ -19,7 +19,6 @@
                             <th>Tanggal</th>
                             <th>Jam Mulai</th>
                             <th>Jam Selesai</th>
-                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -31,13 +30,6 @@
                             <td>{{ $jadwal->tanggal }}</td>
                             <td>{{ $jadwal->jam_mulai }}</td>
                             <td>{{ $jadwal->jam_selesai }}</td>
-                            <td>
-                                @if($jadwal->status === 'Tersedia')
-                                    <span class="badge bg-success">Tersedia</span>
-                                    @else
-                                    <span class="badge bg-danger">Dibooking</span>
-                                @endif    
-                            </td>
                             <td>    
                                 <a href="{{ route('jadwals.edit', $jadwal->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                 <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $jadwal->id }}">Hapus</button>
@@ -49,7 +41,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted">
+                            <td colspan="6" class="text-center text-muted">
                                 <i class="bi bi-exclamation-circle" style="font-size: 1.5rem;"></i>
                                 <br>
                                 Belum ada data lapangan

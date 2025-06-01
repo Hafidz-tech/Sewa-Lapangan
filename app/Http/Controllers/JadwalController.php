@@ -27,7 +27,6 @@ class JadwalController extends Controller
             'tanggal' => 'required|date',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
-            'status' => 'required|in:Tersedia,Dibooking'
         ]);
 
         Jadwals::create($request->all());
@@ -48,7 +47,6 @@ class JadwalController extends Controller
             'tanggal' => 'required|date',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
-            'status' => 'required|in:Tersedia,Dibooking'
         ]);
 
         $jadwal->update($request->all());

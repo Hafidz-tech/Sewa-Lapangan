@@ -21,6 +21,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('pelanggans.index') }}">Pelanggan</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('pemesanans.index') }}">Pemesanan</a>
+            </li>
         </ul>
 
             <div class="ms-auto">

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LapanganController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\PemesananController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,3 +26,12 @@ Route::resource('jadwals', JadwalController::class);
 
 //Route resource untuk pelanggan
 Route::resource('pelanggans', PelangganController::class);
+
+//Route untuk pemesanan
+Route::get('/pemesanans/create', [PemesananController::class, 'create'])->name('pemesanans.create');
+Route::post('/pemesanans', [PemesananController::class, 'store'])->name('pemesanans.store');
+Route::get('/pemesanans', [PemesananController::class, 'index'])->name('pemesanans.index'); // kalau perlu daftar
+
+//route untuk pembayaran
+Route::post('/pembayarans/bayar/{pemesanan}', [PembayaranController::class, 'bayar'])->name('pembayarans.bayar');
+

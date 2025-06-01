@@ -52,14 +52,6 @@
             <input type="time" name="jam_selesai" class="form-control">
         </div>
 
-        <div class="mb-3">
-            <label for="status" class="form-label">Status</label>
-            <select name="status" class="form-select">
-                <option value="Tersedia">Tersedia</option>
-                <option value="Dibooking">Dibooking</option>
-            </select>
-        </div>
-
         <button type="submit" class="btn btn-success">Simpan</button>
         <a href="{{ route('jadwals.index') }}" class="btn btn-secondary">Batal</a>
     </form>

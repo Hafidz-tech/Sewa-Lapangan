@@ -52,14 +52,6 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status</label>
-                    <select name="status" id="status" class="form-select">
-                        <option value="Tersedia" {{ $jadwal->status === 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
-                        <option value="Dibooking" {{ $jadwal->status === 'Dibooking' ? 'selected' : '' }}>Dibooking</option>
-                    </select>
-                </div>
-
                 <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 <a href="{{ route('jadwals.index') }}" class="btn btn-secondary">Kembali</a>
             </form>

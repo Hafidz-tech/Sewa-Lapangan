@@ -6,6 +6,7 @@ use App\Http\Controllers\LapanganController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PemesananController;
+use App\Http\Controllers\PembayaranController;
 
 Route::get('/', function () {
     return view('welcome');

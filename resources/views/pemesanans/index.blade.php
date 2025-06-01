@@ -52,7 +52,7 @@
                                         <button type="submit" class="btn btn-sm btn-success">Tandai Sudah Bayar</button>
                                     </form>
                                 @else
-                                    <span class="text-muted">-</span>
+                                    <span class="text-muted">Tidak ada aksi</span>
                                 @endif
                             </td>
                         </tr>

@@ -29,7 +29,13 @@ class JadwalController extends Controller
             'jam_selesai' => 'required|after:jam_mulai',
         ]);
 
-        Jadwals::create($request->all());
+        Jadwals::create([
+            'lapangan_id' => $request->lapangan_id,
+            'tanggal' => $request->tanggal,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+            'status' => 'tersedia', //default status
+        ]);
 
         return redirect()->route('jadwals.index')->with('success', 'Jadwal berhasil ditambahkan.');
     }
@@ -49,7 +55,13 @@ class JadwalController extends Controller
             'jam_selesai' => 'required|after:jam_mulai',
         ]);
 
-        $jadwal->update($request->all());
+        $jadwal->update([
+            'lapangan_id' => $request->lapangan_id,
+            'tanggal' => $request->tanggal,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+            //status tidak diubah
+        ]);
 
         return redirect()->route('jadwals.index')->with('success', 'Jadwal berhasil diperbarui.');
     }

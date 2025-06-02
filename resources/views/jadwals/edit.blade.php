@@ -13,15 +13,16 @@
 
                 <div class="mb-3">
                     <label for="lapangan_id" class="form-label">Pilih Lapangan</label>
-                    <select name="lapangan_id" id="lapangan_id" class="form-select" @error ('lapangan_id') is-invalid @enderror> 
+                    <select name="lapangan_id" id="lapangan_id" class="form-select @error('lapangan_id') is-invalid @enderror"> 
                         <option value="">-- Pilih Lapangan --</option>
                         @foreach($lapangans as $lapangan)
-                            <option value="{{ $lapangan->id }}" {{old('lapangan_id') == $jadwal->lapangan_id == $lapangan->id ? 'selected' : '' }}>
+                            <option value="{{ $lapangan->id }}" 
+                                {{ (old('lapangan_id', $jadwal->lapangan_id) == $lapangan->id) ? 'selected' : '' }}>
                                 {{ $lapangan->nama }}
                             </option>
                         @endforeach
                     </select>
-                    @error('lapangan_')
+                    @error('lapangan_id')
                     <div class="invalid-feedback">
                         {{ $message }}
                     </div>
@@ -30,7 +31,9 @@
 
                 <div class="mb-3">
                     <label for="tanggal" class="form-label">Tanggal</label>
-                    <input type="date" name="tanggal" class="form-control" value="{{ old('tanggal', $jadwal->tanggal }}" class="form-control @error('tanggal') is-invalid @enderror">
+                    <input type="date" name="tanggal" 
+                        value="{{ old('tanggal', $jadwal->tanggal) }}" 
+                        class="form-control @error('tanggal') is-invalid @enderror">
                     @error('tanggal')
                     <div class="text-danger small">{{ $message }}</div>
                     @enderror
@@ -38,15 +41,19 @@
 
                 <div class="mb-3">
                     <label for="jam_mulai" class="form-label">Jam Mulai</label>
-                    <input type="time" name="jam_mulai" class="form-control" value="{{ old('jam_mulai', $jadwal->jam_mulai }}" class="form-control @error('jam_mulai') is-invalid @enderror">
+                    <input type="time" name="jam_mulai" 
+                        value="{{ old('jam_mulai', $jadwal->jam_mulai) }}" 
+                        class="form-control @error('jam_mulai') is-invalid @enderror">
                     @error('jam_mulai')
-                    <div class="text-danger" small>{{ $message }}</div>
+                    <div class="text-danger small">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="jam_selesai" class="form-label">Jam Selesai</label>
-                    <input type="time" name="jam_selesai" class="form-control" value="{{old('jam_selesai', $jadwal->jam_selesai }}" class="form-control @error('jam_selesai') is_invalid @enderror">
+                    <input type="time" name="jam_selesai" 
+                        value="{{ old('jam_selesai', $jadwal->jam_selesai) }}" 
+                        class="form-control @error('jam_selesai') is-invalid @enderror">
                     @error('jam_selesai')
                     <div class="text-danger small">{{ $message }}</div>
                     @enderror

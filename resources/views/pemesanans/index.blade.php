@@ -39,7 +39,7 @@
                                         {{ ucfirst($pemesanan->pembayaran->status) }}
                                     </span>
                                 @else
-                                    <span class="badge bg-secondary">Belum Bayar</span>
+                                    <span class="badge bg-secondary">Pending</span>
                                 @endif
                             </td>
 

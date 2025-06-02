@@ -12,7 +12,7 @@ class PemesananController extends Controller
 {
     public function index()
     {
-        $pemesanans = Pemesanans::with(['pelanggan', 'jadwal.lapangan'])->latest()->get();
+        $pemesanans = Pemesanans::with(['pelanggan', 'jadwal.lapangan', 'pembayaran'])->latest()->get();
         return view('pemesanans.index', compact('pemesanans'));
     }
 
@@ -45,10 +45,10 @@ class PemesananController extends Controller
 
         // Simpan pemesanan
         $pemesanan = Pemesanans::create([
-    'pelanggan_id' => $request->pelanggan_id,
-    'jadwal_id' => $request->jadwal_id,
-    'total_bayar' => $totalBayar,
-]);
+        'pelanggan_id' => $request->pelanggan_id,
+        'jadwal_id' => $request->jadwal_id,
+        'total_bayar' => $totalBayar,
+        ]);
 
 
         //Simpan data di pembayaran

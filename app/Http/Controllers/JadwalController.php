@@ -68,7 +68,14 @@ class JadwalController extends Controller
 
     public function destroy(Jadwals $jadwal)
     {
-        $jadwal->delete();
+        //cek jadwal apakah memiliki pemesanan
+        if ($jadwal->pemesanans()->count() > 0) {
+            return redirect()->route('jadwals.index')
+            ->with('error', 'jadwal gagal dihapus karena maemiliki pemesanan.');
+        }
+
+        $jadwal = delete();
+        
         return redirect()->route('jadwals.index')->with('success', 'Jadwal berhasil dihapus.');
     }
 }

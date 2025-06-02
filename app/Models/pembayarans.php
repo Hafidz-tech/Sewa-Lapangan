@@ -18,5 +18,10 @@ class pembayarans extends Model
     {
         return $this->belongsTo(Pemesanans::class, 'pemesanan_id');
     }
+
+    public function jadwal()
+    {
+        return $this->belongsTo(Jadwals::class);
+    }
 }
     

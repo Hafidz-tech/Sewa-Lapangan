@@ -52,7 +52,12 @@
                                         <button type="submit" class="btn btn-sm btn-success">Tandai Sudah Bayar</button>
                                     </form>
                                 @else
-                                    <span class="text-muted">Tidak ada aksi</span>
+                                    {{-- Jika sudah bayar, tampilkan tombol hapus --}}
+                                    <form action="{{ route('pemesanans.destroy', $pemesanan->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus pemesanan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                    </form>
                                 @endif
                             </td>
                         </tr>

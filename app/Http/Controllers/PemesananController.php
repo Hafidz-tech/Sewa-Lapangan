@@ -59,4 +59,13 @@ class PemesananController extends Controller
 
         return redirect()->route('pemesanans.index')->with('success', 'Pemesanan berhasil ditambahkan.');
     }
+
+    public function destroy($id)
+    {
+        $pemesanan = Pemesanans::findOrFail($id);
+
+        $pemesanan->pembayaran()->delete();
+
+        return redirect()->route('pemesanans.index')->with('Success', 'pemesanan berhasil dihapus.');
+    }
 }

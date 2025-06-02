@@ -32,6 +32,8 @@ Route::resource('pelanggans', PelangganController::class);
 Route::get('/pemesanans/create', [PemesananController::class, 'create'])->name('pemesanans.create');
 Route::post('/pemesanans', [PemesananController::class, 'store'])->name('pemesanans.store');
 Route::get('/pemesanans', [PemesananController::class, 'index'])->name('pemesanans.index'); // kalau perlu daftar
+Route::delete('/pemesanans/{id}', [PemesananController::class, 'destroy'])->name('pemesanans.destroy');
+
 
 //route untuk pembayaran
 Route::post('/pembayarans/bayar/{pemesanan}', [PembayaranController::class, 'bayar'])->name('pembayarans.bayar');

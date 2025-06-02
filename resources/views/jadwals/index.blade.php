@@ -32,10 +32,8 @@
                             <td>{{ $jadwal->jam_mulai }}</td>
                             <td>{{ $jadwal->jam_selesai }}</td>
                             <td>
-                                @if($jadwal->pembayaran)
-                                    <span class="badge bg-{{ $jadwal->pembayaran->status == 'terpakai' ? 'success' : 'warning text-dark' }}">
-                                        {{ ucfirst($jadwal->pembayaran->status) }}
-                                    </span>
+                                @if($jadwal->status == 'terpakai')
+                                    <span class="badge bg-danger">Terpakai</span>
                                 @else
                                     <span class="badge bg-success">Tersedia</span>
                                 @endif

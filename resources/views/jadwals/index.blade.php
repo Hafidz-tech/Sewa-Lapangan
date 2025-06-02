@@ -39,8 +39,12 @@
                                 @endif
                             </td>
                             <td>    
-                                <a href="{{ route('jadwals.edit', $jadwal->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $jadwal->id }}">Hapus</button>
+                                <a href="{{ route('jadwals.edit', $jadwal->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $jadwal->id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                                 <form id="form-hapus-{{ $jadwal->id }}" action="{{ route('jadwals.destroy', $jadwal->id) }}" method="POST" style="display: none;">
                                 @csrf
                                 @method('DELETE')

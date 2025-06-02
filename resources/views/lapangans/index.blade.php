@@ -25,8 +25,12 @@
                             <td>{{ $lapangan->nama }}</td>
                             <td>Rp {{ number_format($lapangan->harga_per_jam, 0, ',', '.') }}</td>
                             <td>    
-                                <a href="{{ route('lapangans.edit', $lapangan->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $lapangan->id }}">Hapus</button>
+                                <a href="{{ route('lapangans.edit', $lapangan->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $lapangan->id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                                 <form id="form-hapus-{{ $lapangan->id }}" action="{{ route('lapangans.destroy', $lapangan->id) }}" method="POST" style="display: none;">
                                 @csrf
                                 @method('DELETE')

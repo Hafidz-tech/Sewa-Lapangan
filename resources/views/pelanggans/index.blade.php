@@ -27,8 +27,12 @@
                             <td>{{ $pelanggan->no_hp }}</td>
                             <td>{{ $pelanggan->alamat }}</td>
                             <td>    
-                                <a href="{{ route('pelanggans.edit', $pelanggan->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $pelanggan->id }}">Hapus</button>
+                                <a href="{{ route('pelanggans.edit', $pelanggan->id) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $pelanggan->id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                                 <form id="form-hapus-{{ $pelanggan->id }}" action="{{ route('pelanggans.destroy', $pelanggan->id) }}" method="POST" style="display: none;">
                                 @csrf
                                 @method('DELETE')

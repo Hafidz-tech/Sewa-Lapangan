@@ -29,7 +29,10 @@
 
         <div class="mb-3">
             <label for="tanggal" class="form-label">Tanggal</label>
-            <input type="date" name="tanggal" class="form-control" value="{{ old('tanggal') }} @error('tanggal') is-invalid @enderror">
+            @php
+                $today = date('Y-m-d');
+            @endphp
+            <input type="date" name="tanggal" class="form-control @error('tanggal') is-invalid @enderror" value="{{ old('tanggal') }}" min="{{ $today }}">
             @error('tanggal')
             <div class="invalid-feedback">
                 {{ $message }}

@@ -45,18 +45,16 @@
 
                             {{-- Tombol Aksi --}}
                             <td>
-                                {{-- Tombol Tandai Sudah Bayar jika belum --}}
                                 @if(!$pemesanan->pembayaran || $pemesanan->pembayaran->status != 'paid')
                                     <form action="{{ route('pembayarans.bayar', $pemesanan->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-success">Tandai Sudah Bayar</button>
                                     </form>
                                 @else
-                                    {{-- Jika sudah bayar, tampilkan tombol hapus --}}
-                                    <form action="{{ route('pemesanans.destroy', $pemesanan->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus pemesanan ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                    <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $pemesanan->id }}">Hapus</button>
+                                    <form id="form-hapus-{{ $pemesanan->id }}" action="{{ route('pemesanans.destroy', $pemesanan->id) }}" method="POST" style="display: none;">
+                                        @csrf
+                                        @method('DELETE')
                                     </form>
                                 @endif
                             </td>
@@ -88,4 +86,28 @@
     });
 </script>
 @endif
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.btn-hapus');
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            Swal.fire({
+                title: 'Yakin ingin menghapus?',
+                text: "Data akan hilang secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('form-hapus-' + id).submit();
+                }
+            });
+        });
+    });
+});
+</script>
 @endsection

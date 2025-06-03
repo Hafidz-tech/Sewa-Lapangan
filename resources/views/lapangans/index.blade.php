@@ -133,6 +133,17 @@
     });
 </script>
 @endif
+@if(session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '{{ session('error') }}',
+        timer: 2000,
+        showConfirmButton: false
+    });
+</script>
+@endif
 
 <script>
     // Tombol hapus dengan konfirmasi SweetAlert

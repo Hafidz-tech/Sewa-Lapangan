@@ -47,12 +47,21 @@ class LapanganController extends Controller
         return redirect()->route('lapangans.index')->with('success', 'Data lapangan berhasil diupdate');
     }
 
-    // Menghapus lapangan
+   // Menghapus lapangan
     public function destroy($id)
     {
-        $lapangan = Lapangans::findOrFail($id);
-        $lapangan->delete();
+        
+    $lapangan = Lapangans::findOrFail($id);
 
-        return redirect()->route('lapangans.index')->with('success', 'Data lapangan berhasil dihapus');
+    // Cek apakah masih ada jadwal terkait
+    if ($lapangan->jadwal()->exists()) {
+        return redirect()->route('lapangans.index')
+            ->with('error', 'Lapangan gagal dihapus karena masih memiliki jadwal yang terkait.');
     }
+
+    $lapangan->delete();
+
+    return redirect()->route('lapangans.index')->with('success', 'Data lapangan berhasil dihapus.');
+    }
+
 }

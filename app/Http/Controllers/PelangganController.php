@@ -51,7 +51,15 @@ class PelangganController extends Controller
 
     public function destroy(Pelanggans $pelanggan)
     {
-        $pelanggan->delete();
-        return redirect()->route('pelanggans.index')->with('success', 'Pelanggan berhasil dihapus.');
+    // Cek apakah pelanggan memiliki pemesanan
+    if ($pelanggan->pemesanan()->exists()) {
+        return redirect()->route('pelanggans.index')
+            ->with('error', 'Pelanggan tidak bisa dihapus karena masih memiliki data pemesanan.');
     }
+
+    // Jika tidak ada pemesanan, baru hapus
+    $pelanggan->delete();
+    return redirect()->route('pelanggans.index')->with('success', 'Pelanggan berhasil dihapus.');
+    }
+
 }

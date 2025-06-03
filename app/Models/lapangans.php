@@ -17,7 +17,7 @@ class Lapangans extends Model
 
     public function jadwal()
 {
-    return $this->hasMany(Jadwals::class);
+    return $this->hasMany(Jadwals::class, 'lapangan_id');
 }
 
 }

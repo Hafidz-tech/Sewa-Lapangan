@@ -18,7 +18,7 @@ class Pelanggans extends Model
 
     public function pemesanan()
     {
-        return $this->hasMany(Pemesanans::class);
+        return $this->hasMany(Pemesanans::class, 'pelanggan_id');
     }
 
     public function pembayaran()

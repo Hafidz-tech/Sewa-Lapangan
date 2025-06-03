@@ -51,7 +51,9 @@
                                         <button type="submit" class="btn btn-sm btn-success">Tandai Sudah Bayar</button>
                                     </form>
                                 @else
-                                    <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $pemesanan->id }}">Hapus</button>
+                                    <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $pemesanan->id }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
                                     <form id="form-hapus-{{ $pemesanan->id }}" action="{{ route('pemesanans.destroy', $pemesanan->id) }}" method="POST" style="display: none;">
                                         @csrf
                                         @method('DELETE')

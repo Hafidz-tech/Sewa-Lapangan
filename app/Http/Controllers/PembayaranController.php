@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Pemesanans;
 use App\Models\Pembayarans;
+use App\Models\Jadwals;
+use App\Models\Pelanggans;
 use Illuminate\Http\Request;
 
 class PembayaranController extends Controller
@@ -32,4 +34,5 @@ class PembayaranController extends Controller
         return redirect()->route('pemesanans.index')->with('success', 'Status pembayaran berhasil diperbarui.');
 
     }
+
 }

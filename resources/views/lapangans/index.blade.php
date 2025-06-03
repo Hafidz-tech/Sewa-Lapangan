@@ -6,7 +6,8 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">Daftar Lapangan</h3>
-                <a href="{{ route('lapangans.create') }}" class="btn btn-primary">Tambah Lapangan</a>
+                <!-- Tombol Tambah pakai modal -->
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Lapangan</button>
             </div>
         </div>
         <div class="card-body">
@@ -25,15 +26,24 @@
                             <td>{{ $lapangan->nama }}</td>
                             <td>Rp {{ number_format($lapangan->harga_per_jam, 0, ',', '.') }}</td>
                             <td>    
-                                <a href="{{ route('lapangans.edit', $lapangan->id) }}" class="btn btn-sm btn-warning">
+                                <!-- Tombol Edit pakai modal -->
+                                <button 
+                                    class="btn btn-sm btn-warning btn-edit" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#modalEdit"
+                                    data-id="{{ $lapangan->id }}"
+                                    data-nama="{{ $lapangan->nama }}"
+                                    data-harga="{{ $lapangan->harga_per_jam }}">
                                     <i class="bi bi-pencil"></i>
-                                </a>
+                                </button>
+
+                                <!-- Tombol Hapus -->
                                 <button type="button" class="btn btn-sm btn-danger btn-hapus" data-id="{{ $lapangan->id }}">
                                     <i class="bi bi-trash"></i>
                                 </button>
                                 <form id="form-hapus-{{ $lapangan->id }}" action="{{ route('lapangans.destroy', $lapangan->id) }}" method="POST" style="display: none;">
-                                @csrf
-                                @method('DELETE')
+                                    @csrf
+                                    @method('DELETE')
                                 </form>
                             </td>
                         </tr>
@@ -52,6 +62,66 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Tambah -->
+<div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('lapangans.store') }}" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTambahLabel">Tambah Lapangan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nama" class="form-label">Nama Lapangan</label>
+                        <input type="text" name="nama" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="harga_per_jam" class="form-label">Harga per Jam</label>
+                        <input type="number" name="harga_per_jam" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Edit -->
+<div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="formEdit" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditLabel">Edit Lapangan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_nama" class="form-label">Nama Lapangan</label>
+                        <input type="text" name="nama" id="edit_nama" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_harga_per_jam" class="form-label">Harga per Jam</label>
+                        <input type="number" name="harga_per_jam" id="edit_harga_per_jam" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 @if(session('success'))
 <script>
     Swal.fire({
@@ -63,10 +133,11 @@
     });
 </script>
 @endif
+
 <script>
+    // Tombol hapus dengan konfirmasi SweetAlert
     document.addEventListener('DOMContentLoaded', function () {
-        const buttons = document.querySelectorAll('.btn-hapus');
-        buttons.forEach(button => {
+        document.querySelectorAll('.btn-hapus').forEach(button => {
             button.addEventListener('click', function () {
                 const id = this.getAttribute('data-id');
                 Swal.fire({
@@ -83,6 +154,19 @@
                         document.getElementById('form-hapus-' + id).submit();
                     }
                 });
+            });
+        });
+
+        // Isi data ke modal edit
+        document.querySelectorAll('.btn-edit').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                const nama = this.getAttribute('data-nama');
+                const harga = this.getAttribute('data-harga');
+
+                document.getElementById('edit_nama').value = nama;
+                document.getElementById('edit_harga_per_jam').value = harga;
+                document.getElementById('formEdit').action = `/lapangans/${id}`;
             });
         });
     });

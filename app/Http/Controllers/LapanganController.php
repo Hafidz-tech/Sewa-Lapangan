@@ -7,17 +7,14 @@ use Illuminate\Http\Request;
 
 class LapanganController extends Controller
 {
+    // Menampilkan daftar lapangan
     public function index()
     {
         $lapangans = Lapangans::all();
         return view('lapangans.index', compact('lapangans'));
     }
 
-    public function create()
-    {
-        return view('lapangans.create');
-    }
-
+    // Menyimpan lapangan baru (dari modal tambah)
     public function store(Request $request)
     {
         $request->validate([
@@ -25,17 +22,15 @@ class LapanganController extends Controller
             'harga_per_jam' => 'required|numeric'
         ]);
 
-        Lapangans::create($request->all());
+        Lapangans::create([
+            'nama' => $request->nama,
+            'harga_per_jam' => $request->harga_per_jam
+        ]);
 
         return redirect()->route('lapangans.index')->with('success', 'Data lapangan berhasil ditambahkan');
     }
 
-    public function edit($id)
-    {
-        $lapangan = Lapangans::findOrFail($id);
-        return view('lapangans.edit', compact('lapangan'));
-    }
-
+    // Mengupdate data lapangan (dari modal edit)
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -44,11 +39,15 @@ class LapanganController extends Controller
         ]);
 
         $lapangan = Lapangans::findOrFail($id);
-        $lapangan->update($request->all());
+        $lapangan->update([
+            'nama' => $request->nama,
+            'harga_per_jam' => $request->harga_per_jam
+        ]);
 
         return redirect()->route('lapangans.index')->with('success', 'Data lapangan berhasil diupdate');
     }
 
+    // Menghapus lapangan
     public function destroy($id)
     {
         $lapangan = Lapangans::findOrFail($id);

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Jadwals;
 use App\Models\Lapangans;
+use App\Models\Pemesanans;
+use App\Models\Pembayarans;
 use Illuminate\Http\Request;
 
 class JadwalController extends Controller
@@ -67,15 +69,18 @@ class JadwalController extends Controller
     }
 
     public function destroy(Jadwals $jadwal)
-    {
-        //cek jadwal apakah memiliki pemesanan
-        if ($jadwal->pemesanans()->count() > 0) {
-            return redirect()->route('jadwals.index')
-            ->with('error', 'jadwal gagal dihapus karena maemiliki pemesanan.');
-        }
-
-        $jadwal = delete();
-        
-        return redirect()->route('jadwals.index')->with('success', 'Jadwal berhasil dihapus.');
+{
+    // Periksa apakah ada pemesanan terkait dengan jadwal ini
+    if ($jadwal->pemesanan()->exists()) {
+    return redirect()->route('jadwals.index')
+        ->with('error', 'Jadwal gagal dihapus karena masih memiliki pemesanan.');
     }
+
+    // Jika tidak ada pemesanan, maka hapus
+    $jadwal->delete();
+
+    return redirect()->route('jadwals.index')->with('success', 'Jadwal berhasil dihapus.');
+}
+
+
 }

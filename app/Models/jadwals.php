@@ -30,6 +30,6 @@ class Jadwals extends Model
      */
     public function pemesanan()
     {
-        return $this->hasOne(Pemesanans::class);
+        return $this->hasMany(Pemesanans::class, "jadwal_id");
     }
 }

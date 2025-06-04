@@ -1,12 +1,44 @@
 @extends('layouts.app')
 
-@section('hideNavbar') <!-- ini penting agar View::hasSection bekerja -->
+@section('hideNavbar')
 @endsection
 
 @section('content')
-<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow p-4" style="width: 100%; max-width: 450px;">
-        <h3 class="mb-4 text-center">Registrasi</h3>
+<style>
+    body {
+        background: #f0f4f8;
+    }
+
+    .register-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+    }
+
+    .register-title {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-control {
+        border-radius: 0.5rem;
+    }
+
+    .btn-success {
+        border-radius: 0.5rem;
+        background-color: #38b000;
+        border: none;
+    }
+
+    .btn-success:hover {
+        background-color: #2d8600;
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card register-card p-4" style="width: 100%; max-width: 480px;">
+        <h3 class="mb-4 text-center register-title">Registrasi</h3>
 
         @if($errors->any())
             <div class="alert alert-danger">
@@ -41,10 +73,10 @@
                 <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="btn btn-success w-100">Daftar</button>
+            <button type="submit" class="btn btn-success w-100 mt-2">Daftar</button>
 
             <div class="text-center mt-3">
-                <a href="{{ route('login') }}">Sudah punya akun? Masuk</a>
+                <a href="{{ route('login') }}" class="text-decoration-none">Sudah punya akun? <strong>Masuk di sini</strong></a>
             </div>
         </form>
     </div>

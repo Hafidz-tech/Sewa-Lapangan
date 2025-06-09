@@ -16,10 +16,8 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Lapangan</th>
-                            <th>Tanggal</th>
                             <th>Jam Mulai</th>
                             <th>Jam Selesai</th>
-                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -28,16 +26,8 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $jadwal->lapangan?->nama ?? '-' }}</td>
-                            <td>{{ $jadwal->tanggal }}</td>
                             <td>{{ $jadwal->jam_mulai }}</td>
                             <td>{{ $jadwal->jam_selesai }}</td>
-                            <td>
-                                @if($jadwal->status == 'terpakai')
-                                    <span class="badge bg-danger">Terpakai</span>
-                                @else
-                                    <span class="badge bg-success">Tersedia</span>
-                                @endif
-                            </td>
                             <td>    
                                 <a href="{{ route('jadwals.edit', $jadwal->id) }}" class="btn btn-sm btn-warning">
                                     <i class="bi bi-pencil"></i>

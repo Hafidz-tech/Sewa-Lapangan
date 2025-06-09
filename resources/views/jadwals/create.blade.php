@@ -11,6 +11,12 @@
     <div class="card-body">
     <form action="{{ route('jadwals.store') }}" method="POST">
         @csrf
+        @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+    
 
         <div class="mb-3">
             <label for="lapangan_id" class="form-label">Lapangan</label>
@@ -21,19 +27,6 @@
                 @endforeach
             </select>
             @error('lapangan_id')
-            <div class="invalid-feedback">
-                {{ $message }}
-            </div>
-            @enderror
-        </div>
-
-        <div class="mb-3">
-            <label for="tanggal" class="form-label">Tanggal</label>
-            @php
-                $today = date('Y-m-d');
-            @endphp
-            <input type="date" name="tanggal" class="form-control @error('tanggal') is-invalid @enderror" value="{{ old('tanggal') }}" min="{{ $today }}">
-            @error('tanggal')
             <div class="invalid-feedback">
                 {{ $message }}
             </div>

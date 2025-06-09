@@ -6,7 +6,10 @@ use App\Models\Pemesanans;
 use App\Models\Pelanggans;
 use App\Models\Jadwals;
 use App\Models\Pembayarans;
+use App\Models\Lapangans;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class PemesananController extends Controller
 {
@@ -17,33 +20,45 @@ class PemesananController extends Controller
     }
 
     public function create()
-{
-    $pelanggans = Pelanggans::all();
-    $lapangans = \App\Models\Lapangans::all(); // Ambil semua lapangan
-    $jadwals = Jadwals::with('lapangan')->where('status', 'tersedia')->get(); // Ambil semua jadwal tersedia
+    {
+        $pelanggans = Pelanggans::all();
+        $lapangans = Lapangans::all();
 
-    return view('pemesanans.create', compact('pelanggans', 'lapangans', 'jadwals'));
-}
+        return view('pemesanans.create', compact('pelanggans', 'lapangans'));
+    }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'pelanggan_id' => 'required|exists:pelanggans,id',
-            'jadwal_id' => 'required|exists:jadwals,id',
-            'total_bayar' => 'required|numeric',
-        ]);
+{
+    $request->validate([
+        'pelanggan_id' => 'required|exists:pelanggans,id',
+        'jadwal_id' => 'required|exists:jadwals,id',
+        'tanggal' => 'required|date',
+        'total_bayar' => 'required|numeric',
+    ]);
+
+    try {
+        DB::beginTransaction();
+
+        // Cek apakah jadwal sudah dibayar (paid) pada tanggal yang sama
+        $jadwalDigunakan = Pemesanans::where('jadwal_id', $request->jadwal_id)
+            ->where('tanggal', $request->tanggal)
+            ->whereHas('pembayaran', function ($query) {
+                $query->where('status', 'paid');
+            })
+            ->exists();
+
+        if ($jadwalDigunakan) {
+            return back()->withErrors([
+                'jadwal_id' => 'Jadwal ini sudah dipesan dan dibayar pada tanggal tersebut.'
+            ])->withInput();
+        }
 
         // Ambil jadwal
         $jadwal = Jadwals::with('lapangan')->findOrFail($request->jadwal_id);
 
-        // Cek apakah jadwal sudah terpakai
-        if ($jadwal->status === 'terpakai') {
-            return back()->withErrors(['jadwal_id' => 'Jadwal ini sudah digunakan dalam pemesanan lain.'])->withInput();
-        }
-
         // Hitung durasi
-        $jamMulai = \Carbon\Carbon::parse($jadwal->jam_mulai);
-        $jamSelesai = \Carbon\Carbon::parse($jadwal->jam_selesai);
+        $jamMulai = Carbon::parse($jadwal->jam_mulai);
+        $jamSelesai = Carbon::parse($jadwal->jam_selesai);
         $durasiJam = $jamSelesai->diffInMinutes($jamMulai) / 60;
 
         // Hitung total bayar
@@ -53,39 +68,52 @@ class PemesananController extends Controller
         $pemesanan = Pemesanans::create([
             'pelanggan_id' => $request->pelanggan_id,
             'jadwal_id' => $request->jadwal_id,
+            'tanggal' => $request->tanggal,
             'total_bayar' => $totalBayar,
         ]);
 
-        // Simpan pembayaran dengan status pending
+        // Simpan pembayaran
         Pembayarans::create([
             'pemesanan_id' => $pemesanan->id,
             'status' => 'pending',
         ]);
 
-        return redirect()->route('pemesanans.index')->with('success', 'Pemesanan berhasil ditambahkan.');
-    }
+        DB::commit();
 
+        return redirect()->route('pemesanans.index')->with('success', 'Pemesanan berhasil ditambahkan.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
+    }
+}
+
+public function getJadwal($lapangan_id, Request $request)
+{
+    $tanggal = $request->query('tanggal');
+
+    $jadwals = Jadwals::with('lapangan')
+        ->where('lapangan_id', $lapangan_id)
+        ->whereDoesntHave('pemesanan', function ($query) use ($tanggal) {
+            $query->whereDate('tanggal', $tanggal)
+                ->whereHas('pembayaran', function ($q) {
+                    $q->where('status', 'paid');
+                });
+        })
+        ->get();
+
+    return response()->json($jadwals);
+}
     public function destroy($id)
     {
-        $pemesanan = Pemesanans::findOrFail($id);
+        $pemesanan = Pemesanans::with('pembayaran')->findOrFail($id);
 
-        // Hapus pembayaran terkait dulu (kalau ada)
-        $pemesanan->pembayaran()->delete();
+        // Hapus pembayaran dulu
+        if ($pemesanan->pembayaran) {
+            $pemesanan->pembayaran->delete();
+        }
 
-        // Hapus pemesanan itu sendiri
         $pemesanan->delete();
 
         return redirect()->route('pemesanans.index')->with('success', 'Pemesanan berhasil dihapus.');
-    }
-
-    // Method tambahan untuk filter jadwal berdasarkan lapangan (AJAX)
-    public function getJadwalsByLapangan($lapanganId)
-    {
-        $jadwals = Jadwals::where('lapangan_id', $lapanganId)
-            ->where('status', 'tersedia')
-            ->with('lapangan')
-            ->get();
-
-        return response()->json($jadwals);
     }
 }

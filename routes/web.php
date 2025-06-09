@@ -33,9 +33,11 @@ Route::get('/pemesanans/create', [PemesananController::class, 'create'])->name('
 Route::post('/pemesanans', [PemesananController::class, 'store'])->name('pemesanans.store');
 Route::get('/pemesanans', [PemesananController::class, 'index'])->name('pemesanans.index'); // kalau perlu daftar
 Route::delete('/pemesanans/{id}', [PemesananController::class, 'destroy'])->name('pemesanans.destroy');
+
 Route::post('/pembayarans/bayar/{pemesanan}', [PembayaranController::class, 'bayar'])->name('pembayarans.bayar');
 
 //Route untuk setiap lapangan memiliki jadwal masing masing
-Route::get('/jadwals/by-lapangan/{lapanganId}', [PemesananController::class, 'getJadwalsByLapangan']);
+Route::get('/get-jadwal/{lapangan_id}', [PemesananController::class, 'getJadwal'])->name('get-jadwal');
+
 
 

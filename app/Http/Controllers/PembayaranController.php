@@ -4,35 +4,40 @@ namespace App\Http\Controllers;
 
 use App\Models\Pemesanans;
 use App\Models\Pembayarans;
-use App\Models\Jadwals;
-use App\Models\Pelanggans;
 use Illuminate\Http\Request;
 
 class PembayaranController extends Controller
 {
+    /**
+     * Tandai sebuah pemesanan sebagai "paid" dan batalkan yang lainnya jika konflik jadwal.
+     */
     public function bayar($id)
     {
-        //cari pemesanan berdasarkan id
-        $pemesanan = Pemesanans::with('jadwal')->findOrFail($id);
+        // Cari pemesanan berdasarkan ID
+        $pemesanan = Pemesanans::with(['jadwal', 'pembayaran'])->findOrFail($id);
 
-        //cari pembayaran yang terkait
+        // Buat atau update pembayaran menjadi paid
         $pembayaran = Pembayarans::firstOrNew([
             'pemesanan_id' => $pemesanan->id
         ]);
 
-        //update status agar menjadi paid   
-        $pembayaran->status= 'paid';
+        $pembayaran->status = 'paid';
         $pembayaran->save();
 
-        //Update status di jadwal menjadi terpakai
-        $jadwal = $pemesanan->jadwal;
-        if ($jadwal) {
-            $jadwal->status = 'terpakai';
-            $jadwal->save();
+        // Ambil semua pemesanan lain dengan jadwal dan tanggal sama
+        $pemesanansLain = Pemesanans::where('jadwal_id', $pemesanan->jadwal_id)
+            ->where('tanggal', $pemesanan->tanggal)
+            ->where('id', '!=', $pemesanan->id)
+            ->with('pembayaran')
+            ->get();
+
+        // Gagalkan pemesanan lain yang masih pending
+        foreach ($pemesanansLain as $pesananLain) {
+            if ($pesananLain->pembayaran && $pesananLain->pembayaran->status === 'pending') {
+                $pesananLain->pembayaran->update(['status' => 'gagal']);
+            }
         }
 
-        return redirect()->route('pemesanans.index')->with('success', 'Status pembayaran berhasil diperbarui.');
-
+        return redirect()->route('pemesanans.index')->with('success', 'Status pembayaran berhasil diperbarui. Pemesanan lain dibatalkan.');
     }
-
 }

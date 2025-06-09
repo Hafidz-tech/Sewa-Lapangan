@@ -20,27 +20,42 @@ class JadwalController extends Controller
     {
         $lapangans = Lapangans::all();
         return view('jadwals.create', compact('lapangans'));
+    }   
+
+   public function store(Request $request)
+{
+    $request->validate([
+        'lapangan_id' => 'required|exists:lapangans,id',
+        'jam_mulai' => 'required|date_format:H:i',
+        'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+    ]);
+
+    // Cek apakah ada jadwal yang bentrok
+    $conflict = Jadwals::where('lapangan_id', $request->lapangan_id)
+        ->where(function ($query) use ($request) {
+            $query->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
+                  ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai])
+                  ->orWhere(function ($q) use ($request) {
+                      $q->where('jam_mulai', '<=', $request->jam_mulai)
+                        ->where('jam_selesai', '>=', $request->jam_selesai);
+                  });
+        })->exists();
+
+    if ($conflict) {
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Jadwal bentrok dengan jadwal yang sudah ada di lapangan yang sama.');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'lapangan_id' => 'required|exists:lapangans,id',
-            'tanggal' => 'required|date',
-            'jam_mulai' => 'required',
-            'jam_selesai' => 'required|after:jam_mulai',
-        ]);
+    Jadwals::create([
+        'lapangan_id' => $request->lapangan_id,
+        'jam_mulai' => $request->jam_mulai,
+        'jam_selesai' => $request->jam_selesai,
+    ]);
 
-        Jadwals::create([
-            'lapangan_id' => $request->lapangan_id,
-            'tanggal' => $request->tanggal,
-            'jam_mulai' => $request->jam_mulai,
-            'jam_selesai' => $request->jam_selesai,
-            'status' => 'tersedia', //default status
-        ]);
+    return redirect()->route('jadwals.index')->with('success', 'Jadwal berhasil ditambahkan.');
+}
 
-        return redirect()->route('jadwals.index')->with('success', 'Jadwal berhasil ditambahkan.');
-    }
 
     public function edit(Jadwals $jadwal)
     {
@@ -52,14 +67,12 @@ class JadwalController extends Controller
     {
         $request->validate([
             'lapangan_id' => 'required|exists:lapangans,id',
-            'tanggal' => 'required|date',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
         ]);
 
         $jadwal->update([
             'lapangan_id' => $request->lapangan_id,
-            'tanggal' => $request->tanggal,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
             //status tidak diubah
@@ -69,7 +82,7 @@ class JadwalController extends Controller
     }
 
     public function destroy(Jadwals $jadwal)
-{
+    {
     // Periksa apakah ada pemesanan terkait dengan jadwal ini
     if ($jadwal->pemesanan()->exists()) {
     return redirect()->route('jadwals.index')

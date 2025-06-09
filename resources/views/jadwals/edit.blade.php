@@ -30,16 +30,6 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="tanggal" class="form-label">Tanggal</label>
-                    <input type="date" name="tanggal" 
-                        value="{{ old('tanggal', $jadwal->tanggal) }}" 
-                        class="form-control @error('tanggal') is-invalid @enderror">
-                    @error('tanggal')
-                    <div class="text-danger small">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
                     <label for="jam_mulai" class="form-label">Jam Mulai</label>
                     <input type="time" name="jam_mulai" 
                         value="{{ old('jam_mulai', $jadwal->jam_mulai) }}" 

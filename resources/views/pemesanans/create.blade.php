@@ -7,6 +7,10 @@
             <h4>Tambah Pemesanan</h4>
         </div>
         <div class="card-body">
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
+
             <form action="{{ route('pemesanans.store') }}" method="POST">
                 @csrf
 
@@ -15,14 +19,23 @@
                     <label for="pelanggan_id" class="form-label">Pelanggan</label>
                     <select name="pelanggan_id" class="form-select @error('pelanggan_id') is-invalid @enderror">
                         <option value="">-- Pilih Pelanggan --</option>
-                        @foreach($pelanggans as $pelanggan)
-                            <option value="{{ $pelanggan->id }}" {{ old('pelanggan_id') == $pelanggan->id ? 'selected' : '' }}>
-                                {{ $pelanggan->nama }}
+                        @foreach ($pelanggans as $p)
+                            <option value="{{ $p->id }}" {{ old('pelanggan_id') == $p->id ? 'selected' : '' }}>
+                                {{ $p->nama }}
                             </option>
                         @endforeach
                     </select>
                     @error('pelanggan_id')
-                        <div class="text-danger small">{{ $message }}</div>
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Tanggal -->
+                <div class="mb-3">
+                    <label for="tanggal" class="form-label">Tanggal</label>
+                    <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}" class="form-control @error('tanggal') is-invalid @enderror">
+                    @error('tanggal')
+                        <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
@@ -31,8 +44,10 @@
                     <label for="lapangan_id" class="form-label">Lapangan</label>
                     <select id="lapangan_id" class="form-select">
                         <option value="">-- Pilih Lapangan --</option>
-                        @foreach($lapangans as $lapangan)
-                            <option value="{{ $lapangan->id }}">{{ $lapangan->nama }}</option>
+                        @foreach ($lapangans as $lapangan)
+                            <option value="{{ $lapangan->id }}" {{ old('lapangan_id') == $lapangan->id ? 'selected' : '' }}>
+                                {{ $lapangan->nama }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -42,83 +57,98 @@
                     <label for="jadwal_id" class="form-label">Jadwal</label>
                     <select name="jadwal_id" id="jadwal_id" class="form-select @error('jadwal_id') is-invalid @enderror">
                         <option value="">-- Pilih Jadwal --</option>
-                        {{-- Jadwal akan diisi lewat JavaScript --}}
                     </select>
                     @error('jadwal_id')
-                        <div class="text-danger small">{{ $message }}</div>
+                        <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- Total Bayar -->
                 <div class="mb-3">
-                    <label class="form-label">Total Bayar</label>
+                    <label for="total_bayar" class="form-label">Total Bayar</label>
                     <input type="text" id="preview_total" class="form-control" readonly>
                     <input type="hidden" name="total_bayar" id="total_bayar">
                 </div>
 
-                <button type="submit" class="btn btn-success">Simpan</button>
-                <a href="{{ route('pemesanans.index') }}" class="btn btn-secondary">Kembali</a>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <a href="{{ route('pemesanans.index') }}" class="btn btn-secondary">Batal</a>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Script: Dinamis dan Hitung Total -->
+<!-- Script -->
 <script>
-    const lapanganSelect = document.getElementById('lapangan_id');
-    const jadwalSelect = document.getElementById('jadwal_id');
+    const lapangan = document.getElementById('lapangan_id');
+    const tanggal = document.getElementById('tanggal');
+    const jadwal = document.getElementById('jadwal_id');
     const previewTotal = document.getElementById('preview_total');
-    const hiddenTotal = document.getElementById('total_bayar');
-
-    const semuaJadwal = @json($jadwals);
+    const totalBayar = document.getElementById('total_bayar');
 
     function formatRupiah(angka) {
         return 'Rp ' + angka.toLocaleString('id-ID');
     }
 
     function hitungTotal() {
-        const selectedOption = jadwalSelect.options[jadwalSelect.selectedIndex];
-        if (!selectedOption) return;
+        const option = jadwal.options[jadwal.selectedIndex];
+        if (!option || !option.value) return;
 
-        const harga = parseFloat(selectedOption.getAttribute('data-harga'));
-        const jamRange = selectedOption.getAttribute('data-jam');
+        const harga = parseFloat(option.getAttribute('data-harga'));
+        const jamMulai = option.getAttribute('data-mulai');
+        const jamSelesai = option.getAttribute('data-selesai');
 
-        if (!harga || !jamRange) {
-            previewTotal.value = '';
-            hiddenTotal.value = '';
-            return;
-        }
+        const mulai = jamMulai.split(':');
+        const selesai = jamSelesai.split(':');
+        const durasi = (parseInt(selesai[0]) * 60 + parseInt(selesai[1])) - (parseInt(mulai[0]) * 60 + parseInt(mulai[1]));
+        const jam = durasi / 60;
 
-        const [mulai, selesai] = jamRange.split('-');
-        const [jamMulai, menitMulai] = mulai.split(':').map(Number);
-        const [jamSelesai, menitSelesai] = selesai.split(':').map(Number);
-
-        const totalMenit = (jamSelesai * 60 + menitSelesai) - (jamMulai * 60 + menitMulai);
-        const totalJam = totalMenit / 60;
-        const total = harga * totalJam;
+        const total = harga * jam;
 
         previewTotal.value = formatRupiah(total);
-        hiddenTotal.value = total;
+        totalBayar.value = total;
     }
 
-    lapanganSelect.addEventListener('change', function () {
-        const lapanganId = this.value;
-        jadwalSelect.innerHTML = '<option value="">-- Pilih Jadwal --</option>';
+    function fetchJadwal() {
+        const lapanganId = lapangan.value;
+        const tanggalVal = tanggal.value;
 
-        semuaJadwal.forEach(jadwal => {
-            if (jadwal.lapangan_id == lapanganId && jadwal.status === 'tersedia') {
-                const option = document.createElement('option');
-                option.value = jadwal.id;
-                option.textContent = `${jadwal.tanggal} (${jadwal.jam_mulai} - ${jadwal.jam_selesai})`;
-                option.setAttribute('data-harga', jadwal.lapangan.harga_per_jam);
-                option.setAttribute('data-jam', `${jadwal.jam_mulai}-${jadwal.jam_selesai}`);
-                jadwalSelect.appendChild(option);
-            }
-        });
+        jadwal.innerHTML = '<option value="">-- Pilih Jadwal --</option>';
+        previewTotal.value = '';
+        totalBayar.value = '';
 
-        hitungTotal();
+        if (lapanganId && tanggalVal) {
+            fetch(`/get-jadwal/${lapanganId}?tanggal=${tanggalVal}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        const opt = document.createElement('option');
+                        opt.text = 'Tidak ada jadwal tersedia';
+                        opt.value = '';
+                        jadwal.appendChild(opt);
+                    } else {
+                        data.forEach(j => {
+                            const opt = document.createElement('option');
+                            opt.value = j.id;
+                            opt.text = `${j.jam_mulai} - ${j.jam_selesai}`;
+                            opt.setAttribute('data-harga', j.lapangan.harga_per_jam);
+                            opt.setAttribute('data-mulai', j.jam_mulai);
+                            opt.setAttribute('data-selesai', j.jam_selesai);
+                            jadwal.appendChild(opt);
+                        });
+                    }
+                });
+        }
+    }
+
+    lapangan.addEventListener('change', fetchJadwal);
+    tanggal.addEventListener('change', fetchJadwal);
+    jadwal.addEventListener('change', hitungTotal);
+
+    // Auto load jadwal jika old value ada
+    window.addEventListener('load', () => {
+        if (lapangan.value && tanggal.value) {
+            fetchJadwal();
+        }
     });
-
-    jadwalSelect.addEventListener('change', hitungTotal);
 </script>
 @endsection

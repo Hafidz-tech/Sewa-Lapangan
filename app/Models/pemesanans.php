@@ -14,6 +14,7 @@ class Pemesanans extends Model
         'pelanggan_id',
         'jadwal_id',
         'status',
+        'tanggal',
         'total_bayar'
     ];
 

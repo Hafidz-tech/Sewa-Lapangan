@@ -33,7 +33,7 @@
                 <!-- Tanggal -->
                 <div class="mb-3">
                     <label for="tanggal" class="form-label">Tanggal</label>
-                    <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}" class="form-control @error('tanggal') is-invalid @enderror">
+                    <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}" min="{{ date('Y-m-d') }}" class="form-control @error('tanggal') is-invalid @enderror">
                     @error('tanggal')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror

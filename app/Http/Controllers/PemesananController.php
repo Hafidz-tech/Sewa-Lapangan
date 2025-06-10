@@ -32,7 +32,7 @@ class PemesananController extends Controller
     $request->validate([
         'pelanggan_id' => 'required|exists:pelanggans,id',
         'jadwal_id' => 'required|exists:jadwals,id',
-        'tanggal' => 'required|date',
+        'tanggal' => 'required|date|after_or_equal:today',
         'total_bayar' => 'required|numeric',
     ]);
 

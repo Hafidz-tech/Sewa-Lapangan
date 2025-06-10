@@ -18,7 +18,7 @@ class LapanganController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
+            'nama' => 'required|string|max:255|unique:Lapangans,nama',
             'harga_per_jam' => 'required|numeric'
         ]);
 
@@ -34,7 +34,7 @@ class LapanganController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
+            'nama' => 'required|string|max:255|unique:Lapangans,nama',
             'harga_per_jam' => 'required|numeric'
         ]);
 

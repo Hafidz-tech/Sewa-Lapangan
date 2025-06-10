@@ -67,7 +67,7 @@
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form action="{{ route('lapangans.store') }}" method="POST">
-            @csrf
+            @csrf   
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTambahLabel">Tambah Lapangan</h5>
@@ -76,11 +76,21 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="nama" class="form-label">Nama Lapangan</label>
-                        <input type="text" name="nama" class="form-control" required>
+                        <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}">
+                        @error('nama')
+                        <div class="invalid-feedback">
+                            {{ $message}}
+                        </div>
+                        @enderror
                     </div>
                     <div class="mb-3">
                         <label for="harga_per_jam" class="form-label">Harga per Jam</label>
-                        <input type="number" name="harga_per_jam" class="form-control" required>
+                        <input type="number" name="harga_per_jam" class="form-control @error('harga_per_jam') is-invalid @enderror" value="{{ old('harga_per_jam') }}">
+                        @error('harga_per_jam')
+                        <div class="invalid-feedback">
+                            {{ $message}}
+                        </div>
+                        @enderror
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -122,6 +132,9 @@
     </div>
 </div>
 
+<!-- SweetAlert for flash messages -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 @if(session('success'))
 <script>
     Swal.fire({
@@ -133,6 +146,7 @@
     });
 </script>
 @endif
+
 @if(session('error'))
 <script>
     Swal.fire({
@@ -142,6 +156,22 @@
         timer: 2000,
         showConfirmButton: false
     });
+</script>
+@endif
+
+@if ($errors->any())
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal Menyimpan!',
+        html: `{!! implode('<br>', $errors->all()) !!}`,
+        timer: 2000,
+        showConfirmButton: false
+    });
+
+    // Buka modal tambah jika validasi gagal
+    var tambahModal = new bootstrap.Modal(document.getElementById('modalTambah'));
+    tambahModal.show();
 </script>
 @endif
 
@@ -182,4 +212,5 @@
         });
     });
 </script>
+
 @endsection

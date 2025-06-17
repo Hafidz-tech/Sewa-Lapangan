@@ -17,24 +17,24 @@ class PembayaranController extends Controller
         $pemesanan = Pemesanans::with(['jadwal', 'pembayaran'])->findOrFail($id);
 
         // Buat atau update pembayaran menjadi paid
-        $pembayaran = Pembayarans::firstOrNew([
-            'pemesanan_id' => $pemesanan->id
+        $pembayaran = Pembayarans::firstOrNew([ 
+            'pemesanan_id' => $pemesanan->id //mengecek id pemesanan dengan id yang di proses
         ]);
 
         $pembayaran->status = 'paid';
         $pembayaran->save();
 
         // Ambil semua pemesanan lain dengan jadwal dan tanggal sama
-        $pemesanansLain = Pemesanans::where('jadwal_id', $pemesanan->jadwal_id)
+        $pemesanansLain = Pemesanans::where('jadwal_id', $pemesanan->jadwal_id) 
             ->where('tanggal', $pemesanan->tanggal)
-            ->where('id', '!=', $pemesanan->id)
-            ->with('pembayaran')
+            ->where('id', '!=', $pemesanan->id) //mengambil id pemesanan lain 
+            ->with('pembayaran') 
             ->get();
 
         // Gagalkan pemesanan lain yang masih pending
-        foreach ($pemesanansLain as $pesananLain) {
-            if ($pesananLain->pembayaran && $pesananLain->pembayaran->status === 'pending') {
-                $pesananLain->pembayaran->update(['status' => 'gagal']);
+        foreach ($pemesanansLain as $pesananLain) { //proses untuk pesanan lain
+            if ($pesananLain->pembayaran && $pesananLain->pembayaran->status === 'pending') { 
+                $pesananLain->pembayaran->update(['status' => 'gagal']); // mengupdate status pembayaran menjadi gagal
             }
         }
 

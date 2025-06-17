@@ -6,7 +6,7 @@ use App\Http\Controllers\LapanganController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PemesananController;
-use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\PembayaranController; //mengimpor agar bisa digunakan dalam route
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,24 +20,20 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Route resource untuk lapangan
-Route::resource('lapangans', LapanganController::class);
+Route::resource('lapangans', LapanganController::class); //untuk function CRUD pada lapangan
 
 // Route resource untuk jadwal
-Route::resource('jadwals', JadwalController::class);
+Route::resource('jadwals', JadwalController::class); //resource membuat sekaligus route untuk function dicontroller bawaan laravel
 
 //Route resource untuk pelanggan
 Route::resource('pelanggans', PelangganController::class);
 
 //Route untuk pemesanan
-Route::get('/pemesanans/create', [PemesananController::class, 'create'])->name('pemesanans.create');
-Route::post('/pemesanans', [PemesananController::class, 'store'])->name('pemesanans.store');
-Route::get('/pemesanans', [PemesananController::class, 'index'])->name('pemesanans.index'); // kalau perlu daftar
-Route::delete('/pemesanans/{id}', [PemesananController::class, 'destroy'])->name('pemesanans.destroy');
+Route::resource('pemesanans', PemesananController::class); 
 
+// Route untuk pembayaran
 Route::post('/pembayarans/bayar/{pemesanan}', [PembayaranController::class, 'bayar'])->name('pembayarans.bayar');
-
+      //mengirim data
 //Route untuk setiap lapangan memiliki jadwal masing masing
 Route::get('/get-jadwal/{lapangan_id}', [PemesananController::class, 'getJadwal'])->name('get-jadwal');
-
-
-
+      //mengambil data

@@ -25,11 +25,11 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password) //menyimpan password dengan bentuk enkripsi di database
         ]);
 
         // Langsung login setelah registrasi
-        Auth::login($user);
+        Auth::login($user); // ← Login user setelah registrasi
 
         return redirect('/')->with('success', 'Registrasi berhasil');
     }

@@ -22,7 +22,7 @@ class JadwalController extends Controller
         return view('jadwals.create', compact('lapangans'));
     }   
 
-   public function store(Request $request)
+    public function store(Request $request)
 {
     $request->validate([
         'lapangan_id' => 'required|exists:lapangans,id',
@@ -32,18 +32,18 @@ class JadwalController extends Controller
 
     // Cek apakah ada jadwal yang bentrok
     $conflict = Jadwals::where('lapangan_id', $request->lapangan_id)
-        ->where(function ($query) use ($request) {
-            $query->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
-                  ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai])
-                  ->orWhere(function ($q) use ($request) {
+        ->where(function ($query) use ($request) { 
+            $query->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai]) //mengeceK apakah jam_mulai dari jadwal lain berada ditengah-tengah jam baru
+                  ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai]) 
+                  ->orWhere(function ($q) use ($request) { //meminta untuk mencari data dari jadwal lain yang jam nya mencakup seluruh waktu
                       $q->where('jam_mulai', '<=', $request->jam_mulai)
                         ->where('jam_selesai', '>=', $request->jam_selesai);
                   });
         })->exists();
-
+        
     if ($conflict) {
         return redirect()->back()
-            ->withInput()
+            ->withInput() //menyimpan data pada form input
             ->with('error', 'Jadwal bentrok dengan jadwal yang sudah ada di lapangan yang sama.');
     }
 

@@ -17,8 +17,8 @@ class LapanganController extends Controller
     // Menyimpan lapangan baru (dari modal tambah)
     public function store(Request $request)
     {
-        $request->validate([
-            'nama' => 'required|string|max:255|unique:Lapangans,nama',
+        $request->validate([ //memeriksa data yang dikirimkan melalui form sebelum disimpan ke database
+            'nama' => 'required|string|max:255|unique:Lapangans,nama', //unique memastikan nama lapangan tidak ada yang sama
             'harga_per_jam' => 'required|numeric'
         ]);
 

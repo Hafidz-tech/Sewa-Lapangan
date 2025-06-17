@@ -17,7 +17,7 @@ class PembayaranController extends Controller
         $pemesanan = Pemesanans::with(['jadwal', 'pembayaran'])->findOrFail($id);
 
         // Buat atau update pembayaran menjadi paid
-        $pembayaran = Pembayarans::firstOrNew([ 
+        $pembayaran = Pembayarans::firstOrNew([ // mencari pembayaran yang sudah ada atau membuat baru
             'pemesanan_id' => $pemesanan->id //mengecek id pemesanan dengan id yang di proses
         ]);
 
